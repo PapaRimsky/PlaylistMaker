@@ -7,9 +7,13 @@
     <string name="share" translatable="false">Поделиться приложением</string>
     <string name="support" translatable="false">Написать в поддержку</string>
     <string name="agreement" translatable="false">Пользовательское соглашение</string>
+    <string name="title_to_support" translatable="false">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="message_to_support" translatable="false">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <!-- descriptions-->
     <string name="description_BackToMain" translatable="false">BackToMain</string>
     <string name="description_ToShare" translatable="false">ToShare</string>
     <string name="description_GetSupport" translatable="false">GetSupport</string>
     <string name="description_ToAgreement" translatable="false">ToAgreement</string>
+    <string name="description_Search" translatable="false">Search</string>
+    <string name="description_Cross" translatable="false">Cross</string>
 </resources>
