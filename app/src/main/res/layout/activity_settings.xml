@@ -19,10 +19,18 @@
             android:id="@+id/backToMainFromSettings"
             style="@style/ArrowBackImageButtonStyle"
             android:contentDescription="@string/description_BackToMain"
-            tools:ignore="SpeakableTextPresentCheck" />
+            tools:ignore="SpeakableTextPresentCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:layout_gravity="center"/>
 
         <TextView
             style="@style/NotMainTitleTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
             android:text="@string/settings" />
     </LinearLayout>
 
@@ -32,6 +40,9 @@
 
         <TextView
             style="@style/SettingsTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/dark_theme" />
 
         <Switch
@@ -49,6 +60,9 @@
 
         <TextView
             style="@style/SettingsTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/share" />
 
         <ImageView
@@ -65,6 +79,9 @@
 
         <TextView
             style="@style/SettingsTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/support" />
 
         <ImageView
@@ -81,6 +98,9 @@
 
         <TextView
             style="@style/SettingsTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/agreement" />
 
         <ImageView
