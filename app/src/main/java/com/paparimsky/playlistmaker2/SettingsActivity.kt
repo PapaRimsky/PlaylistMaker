@@ -1,9 +1,11 @@
 package com.paparimsky.playlistmaker2
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.paparimsky.playlistmaker2.databinding.ActivitySettingsBinding
 
 class SettingsActivity: AppCompatActivity(){
@@ -13,6 +15,8 @@ class SettingsActivity: AppCompatActivity(){
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.switchTheme.isChecked = this.resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         binding.backToMainFromSettings.setOnClickListener{
             finish()
         }
@@ -39,7 +43,12 @@ class SettingsActivity: AppCompatActivity(){
             }
         }
         binding.changeTheme.setOnClickListener{
-            binding.switchTheme.isChecked= !binding.switchTheme.isChecked
+            binding.switchTheme.isChecked = !binding.switchTheme.isChecked
+            if (binding.switchTheme.isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
         }
     }
 }
