@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.recyclerview.widget.RecyclerView
 import com.paparimsky.playlistmaker2.databinding.ActivitySettingsBinding
 
 class SettingsActivity: AppCompatActivity(){
