@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.recyclerview.widget.RecyclerView
 import com.paparimsky.playlistmaker2.databinding.ActivitySettingsBinding
 
 class SettingsActivity: AppCompatActivity(){
@@ -43,12 +44,18 @@ class SettingsActivity: AppCompatActivity(){
             }
         }
         binding.changeTheme.setOnClickListener{
-            binding.switchTheme.isChecked = !binding.switchTheme.isChecked
-            if (binding.switchTheme.isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
+            switchTheme()
+        }
+        binding.switchTheme.setOnClickListener{
+            switchTheme()
+        }
+    }
+    private fun switchTheme(){
+        binding.switchTheme.isChecked = !binding.switchTheme.isChecked
+        if (binding.switchTheme.isChecked) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
 }
