@@ -69,7 +69,8 @@
                 android:inputType="text"
                 android:lines="1"
                 android:textColor="@color/searchText"
-                android:textColorHint="@color/grey" />
+                android:textColorHint="@color/grey"
+                android:textCursorDrawable="@null"/>
 
             <ImageView
                 android:id="@+id/cross"
@@ -86,6 +87,6 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/trackList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 </LinearLayout>
