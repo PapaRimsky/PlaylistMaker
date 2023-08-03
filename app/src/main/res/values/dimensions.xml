@@ -4,4 +4,5 @@
     <dimen name="settings_height">61dp</dimen>
     <dimen name="menu_text_size">22sp</dimen>
     <dimen name="common_text_size">16sp</dimen>
+    <dimen name="mini_text_size">11sp</dimen>
 </resources>
