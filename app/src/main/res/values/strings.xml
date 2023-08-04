@@ -19,4 +19,7 @@
     <string name="description_ToAgreement" translatable="false">ToAgreement</string>
     <string name="description_Search" translatable="false">Search</string>
     <string name="description_Cross" translatable="false">Cross</string>
+    <string name="description_To_Track" translatable="false">ToTrack</string>
+    <string name="description_dote" translatable="false">Dote</string>
+    <string name="description_track_image" translatable="false">TrackImage</string>
 </resources>
