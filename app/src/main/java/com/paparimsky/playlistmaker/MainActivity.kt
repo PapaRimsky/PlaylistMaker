@@ -1,9 +1,9 @@
-package com.paparimsky.playlistmaker2
+package com.paparimsky.playlistmaker
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.paparimsky.playlistmaker2.databinding.ActivityMainBinding
+import com.paparimsky.playlistmaker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

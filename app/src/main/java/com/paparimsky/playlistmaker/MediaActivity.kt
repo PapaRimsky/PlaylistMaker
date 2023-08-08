@@ -1,8 +1,8 @@
-package com.paparimsky.playlistmaker2
+package com.paparimsky.playlistmaker
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.paparimsky.playlistmaker2.databinding.ActivityMediaBinding
+import com.paparimsky.playlistmaker.databinding.ActivityMediaBinding
 
 class MediaActivity : AppCompatActivity() {
 

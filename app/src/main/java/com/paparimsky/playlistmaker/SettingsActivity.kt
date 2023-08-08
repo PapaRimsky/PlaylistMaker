@@ -1,4 +1,4 @@
-package com.paparimsky.playlistmaker2
+package com.paparimsky.playlistmaker
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -6,7 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.paparimsky.playlistmaker2.databinding.ActivitySettingsBinding
+import com.paparimsky.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
 

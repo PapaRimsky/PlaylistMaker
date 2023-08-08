@@ -12,6 +12,10 @@
     <string name="view_to_support_subject" translatable="false">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="view_to_support_text" translatable="false">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="view_to_agreement" translatable="false">https://yandex.ru/legal/practicum_offer</string>
+    <string name="nothing_found" translatable="false">Ничего не нашлось</string>
+    <string name="errors_with_link" translatable="false">![CDATA[Проблемы со связью<br /><br />
+                 Загрузка не удалась. Проверьте подключение к интернету]]</string>
+    <string name="reload" translatable="false">Обновить</string>
     <!-- descriptions-->
     <string name="description_BackToMain" translatable="false">BackToMain</string>
     <string name="description_ToShare" translatable="false">ToShare</string>
