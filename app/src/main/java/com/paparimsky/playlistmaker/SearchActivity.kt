@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.paparimsky.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -75,15 +74,17 @@ class SearchActivity : AppCompatActivity() {
         }
         binding.editText.addTextChangedListener(simpleTextWatcher)
 
-        val recycler = findViewById<RecyclerView>(R.id.trackList)
-        recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        recycler.adapter = adapter
-
+        binding.trackList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.trackList.adapter = adapter
+        adapter.tracks = tracks
         binding.editText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 getTracks()
             }
             false
+        }
+        binding.buttonError.setOnClickListener{
+            getTracks()
         }
     }
 
@@ -152,9 +153,5 @@ class SearchActivity : AppCompatActivity() {
             binding.searchError.visibility = View.GONE
             binding.buttonError.visibility = View.GONE
         }
-    }
-    private fun show(){
-        Toast.makeText(applicationContext, "ААА", Toast.LENGTH_LONG)
-            .show()
     }
 }

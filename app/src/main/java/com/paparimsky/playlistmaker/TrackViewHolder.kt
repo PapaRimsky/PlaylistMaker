@@ -29,12 +29,12 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }else{
             trackImage.setImageResource(R.drawable.note)
         }
-        trackName.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackName)
+        trackName.text = model.trackName
         artistName.text = model.artistName
-        trackTime.text = model.trackTimeMillis
+        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis)
     }
 
-    fun dpToPx(dp: Float, context: Context): Int {
+    private fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,
