@@ -47,6 +47,7 @@
         <Switch
             android:id="@+id/switchTheme"
             style="@style/SettingsDrawableStyle"
+            android:clickable="false"
             android:thumb="@drawable/thumb_selector"
             android:track="@drawable/track_selector"
             tools:ignore="UseSwitchCompatOrMaterialXml,TouchTargetSizeCheck" />

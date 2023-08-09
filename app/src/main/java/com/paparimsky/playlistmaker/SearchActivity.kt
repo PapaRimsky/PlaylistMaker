@@ -3,14 +3,14 @@ package com.paparimsky.playlistmaker
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paparimsky.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
@@ -21,16 +21,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivitySearchBinding
+    private var binding: ActivitySearchBinding? = null
 
     private companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
+        const val ITUNES_API_LINK = "https://itunes.apple.com"
     }
 
-    private val iTunesAPILink = "https://itunes.apple.com"
-
     private val retrofit = Retrofit.Builder()
-        .baseUrl(iTunesAPILink)
+        .baseUrl(ITUNES_API_LINK)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
@@ -44,54 +43,45 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        binding.editText.requestFocus()
+        setContentView(binding?.root)
+        binding?.editText?.requestFocus()
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         if (savedInstanceState != null) {
-            binding.editText.setText(savedInstanceState.getString(SEARCH_TEXT, ""))
+            binding?.editText?.setText(savedInstanceState.getString(SEARCH_TEXT, ""))
         }
-        binding.backToMainFromSearch.setOnClickListener {
+        binding?.backToMainFromSearch?.setOnClickListener {
             finish()
         }
-        binding.display.setOnClickListener {
+        binding?.display?.setOnClickListener {
             clearKeyboard()
         }
-        binding.cross.setOnClickListener {
-            binding.editText.setText("")
-            if(tracks.isNotEmpty()){
+        binding?.cross?.setOnClickListener {
+            binding?.editText?.setText("")
+            if (tracks.isNotEmpty()) {
                 tracks.clear()
                 adapter.notifyDataSetChanged()
             }
-            binding.searchError.visibility = View.GONE
-            binding.buttonError.visibility = View.GONE
+            binding?.searchError?.visibility = View.GONE
+            binding?.buttonError?.visibility = View.GONE
 
             clearKeyboard()
         }
-        val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                //
-            }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.cross.visibility = clearCrossVisibility(s)
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                //
-            }
+        binding?.editText?.doOnTextChanged { s, _, _, _ ->
+            binding?.cross?.visibility = clearCrossVisibility(s)
         }
-        binding.editText.addTextChangedListener(simpleTextWatcher)
 
-        binding.trackList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.trackList.adapter = adapter
+        binding?.trackList?.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding?.trackList?.adapter = adapter
         adapter.tracks = tracks
-        binding.editText.setOnEditorActionListener { _, actionId, _ ->
+        binding?.editText?.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 getTracks()
             }
             false
         }
-        binding.buttonError.setOnClickListener{
+        binding?.buttonError?.setOnClickListener {
             getTracks()
         }
     }
@@ -102,55 +92,61 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_TEXT, binding.editText.text.toString())
+        outState.putString(SEARCH_TEXT, binding?.editText?.text.toString())
     }
 
     private fun clearKeyboard() {
         val inputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        inputMethodManager?.hideSoftInputFromWindow(binding.editText.windowToken, 0)
-        binding.editText.clearFocus()
+        inputMethodManager?.hideSoftInputFromWindow(binding?.editText?.windowToken, 0)
+        binding?.editText?.clearFocus()
     }
 
-    private fun getTracks(){
-        if (binding.editText.text.isNotEmpty()) {
-            iTunesService.getTracks(binding.editText.text.toString()).enqueue(object : Callback<TrackResponse> {
-                @SuppressLint("NotifyDataSetChanged")
-                override fun onResponse(
-                    call: Call<TrackResponse>,
-                    response: Response<TrackResponse>
-                ) {
-                    if (response.code() == 200) {
-                        tracks.clear()
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            tracks.addAll(response.body()?.results!!)
-                            adapter.notifyDataSetChanged()
+    private fun getTracks() {
+        if (binding?.editText?.text?.isNotEmpty() == true) {
+            iTunesService.getTracks(binding?.editText?.text.toString())
+                .enqueue(object : Callback<TrackResponse> {
+                    override fun onResponse(
+                        call: Call<TrackResponse>,
+                        response: Response<TrackResponse>
+                    ) {
+                        if (response.code() == 200) {
+                            if (response.body()?.results?.isNotEmpty() == true) {
+                                setUpdatedTracks(response.body()?.results!!)
+                            }
+                            if (tracks.isEmpty()) {
+                                showMessage(getString(R.string.nothing_found), "", MessageType.NF)
+                            }
+                        } else {
+                            showMessage(
+                                getString(R.string.errors_with_link),
+                                response.code().toString(),
+                                MessageType.E
+                            )
                         }
-                        if (tracks.isEmpty()) {
-                            showMessage(getString(R.string.nothing_found), "","NF")
-                        }
-                    } else {
-                        showMessage(getString(R.string.errors_with_link), response.code().toString(),"E")
                     }
-                }
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    showMessage(getString(R.string.errors_with_link), t.message.toString(),"E")
-                }
-            })
+
+                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                        showMessage(
+                            getString(R.string.errors_with_link),
+                            t.message.toString(),
+                            MessageType.E
+                        )
+                    }
+                })
         }
     }
-    @SuppressLint("NotifyDataSetChanged")
-    private fun showMessage(text: String, additionalMessage: String, typeMessage: String) {
+
+    private fun showMessage(text: String, additionalMessage: String, typeMessage: MessageType) {
         if (text.isNotEmpty()) {
-            binding.searchError.visibility = View.VISIBLE
-            tracks.clear()
-            adapter.notifyDataSetChanged()
-            binding.textError.text = text
-            when(typeMessage){
-                "NF"->binding.imageError.setImageResource(R.drawable.error_nothing_found)
-                "E"-> {
-                    binding.imageError.setImageResource(R.drawable.error)
-                    binding.buttonError.visibility = View.VISIBLE
+            binding?.searchError?.visibility = View.VISIBLE
+            setUpdatedTracks(emptyList())
+            binding?.textError?.text = text
+            when (typeMessage) {
+                MessageType.NF -> binding?.imageError?.setImageResource(R.drawable.error_nothing_found)
+                MessageType.E -> {
+                    binding?.imageError?.setImageResource(R.drawable.error)
+                    binding?.buttonError?.visibility = View.VISIBLE
                 }
             }
             if (additionalMessage.isNotEmpty()) {
@@ -158,8 +154,16 @@ class SearchActivity : AppCompatActivity() {
                     .show()
             }
         } else {
-            binding.searchError.visibility = View.GONE
-            binding.buttonError.visibility = View.GONE
+            binding?.searchError?.visibility = View.GONE
+            binding?.buttonError?.visibility = View.GONE
         }
+    }
+
+    private fun setUpdatedTracks(updatedTracks: List<Track>) {
+        val diffResult =
+            DiffUtil.calculateDiff(TrackDiffUtilCallback(adapter.tracks, updatedTracks))
+        adapter.tracks.clear()
+        adapter.tracks.addAll(updatedTracks)
+        diffResult.dispatchUpdatesTo(adapter)
     }
 }
