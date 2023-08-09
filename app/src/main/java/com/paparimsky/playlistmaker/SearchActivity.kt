@@ -40,6 +40,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val adapter = TrackAdapter()
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
@@ -57,6 +58,13 @@ class SearchActivity : AppCompatActivity() {
         }
         binding.cross.setOnClickListener {
             binding.editText.setText("")
+            if(tracks.isNotEmpty()){
+                tracks.clear()
+                adapter.notifyDataSetChanged()
+            }
+            binding.searchError.visibility = View.GONE
+            binding.buttonError.visibility = View.GONE
+
             clearKeyboard()
         }
         val simpleTextWatcher = object : TextWatcher {
