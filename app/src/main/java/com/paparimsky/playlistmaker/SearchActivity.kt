@@ -116,6 +116,9 @@ class SearchActivity : AppCompatActivity() {
                             }
                             if (tracks.isEmpty()) {
                                 showMessage(getString(R.string.nothing_found), "", MessageType.NF)
+                            }else{
+                                binding?.searchError?.visibility = View.GONE
+                                binding?.buttonError?.visibility = View.GONE
                             }
                         } else {
                             showMessage(
