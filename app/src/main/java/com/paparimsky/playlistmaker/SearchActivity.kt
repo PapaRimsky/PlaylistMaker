@@ -60,6 +60,7 @@ class SearchActivity : AppCompatActivity() {
         }
         binding?.root?.setOnClickListener {
             binding?.editText?.clearFocus()
+            clearKeyboard()
         }
         loadTracks()
         binding?.searchBefore?.visibility = if (searchedAdapter.tracksSearched.isNotEmpty()) View.VISIBLE else View.GONE
@@ -71,6 +72,7 @@ class SearchActivity : AppCompatActivity() {
             binding?.searchError?.visibility = View.GONE
             binding?.buttonError?.visibility = View.GONE
             binding?.searchBefore?.visibility = if (searchedAdapter.tracksSearched.isNotEmpty()) View.VISIBLE else View.GONE
+            clearKeyboard()
         }
         binding?.editText?.doOnTextChanged { s, _, _, _ ->
             binding?.cross?.visibility = clearCrossVisibility(s)
@@ -192,8 +194,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setUpdatedTracks(updatedTracks: List<Track>) {
-        val diffResult =
-            DiffUtil.calculateDiff(TrackDiffUtilCallback(adapter.tracks, updatedTracks))
+        val diffResult = DiffUtil.calculateDiff(TrackDiffUtilCallback(adapter.tracks, updatedTracks))
         adapter.tracks.clear()
         adapter.tracks.addAll(updatedTracks)
         diffResult.dispatchUpdatesTo(adapter)
