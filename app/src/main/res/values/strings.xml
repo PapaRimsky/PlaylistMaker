@@ -17,6 +17,8 @@
                  Загрузка не удалась. Проверьте подключение к интернету
     </string>
     <string name="reload" translatable="false">Обновить</string>
+    <string name="search_before" translatable="false">Вы искали</string>
+    <string name="clear_history" translatable="false">Очистить историю</string>
     <!-- descriptions-->
     <string name="description_BackToMain" translatable="false">BackToMain</string>
     <string name="description_ToShare" translatable="false">ToShare</string>
@@ -27,4 +29,5 @@
     <string name="description_To_Track" translatable="false">ToTrack</string>
     <string name="description_dote" translatable="false">Dote</string>
     <string name="description_track_image" translatable="false">TrackImage</string>
+    <string name="description_search_message" translatable="false">Message</string>
 </resources>

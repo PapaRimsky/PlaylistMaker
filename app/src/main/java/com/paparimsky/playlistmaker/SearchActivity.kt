@@ -2,6 +2,7 @@ package com.paparimsky.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -35,46 +36,51 @@ class SearchActivity : AppCompatActivity() {
 
     private val iTunesService = retrofit.create(ITunesAPI::class.java)
 
-    private val tracks = ArrayList<Track>()
+    private val adapter = TrackAdapter{
+        addTrackToMemory(it)
+    }
 
-    private val adapter = TrackAdapter()
+    private val searchHistory = SearchHistory(App.sharedPrefs)
 
-    @SuppressLint("NotifyDataSetChanged")
+    private val searchedAdapter = SearchedTrackAdapter()
+
+    private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+        binding?.backToMainFromSearch?.setOnClickListener {
+            finish()
+        }
         binding?.editText?.requestFocus()
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         if (savedInstanceState != null) {
             binding?.editText?.setText(savedInstanceState.getString(SEARCH_TEXT, ""))
         }
-        binding?.backToMainFromSearch?.setOnClickListener {
-            finish()
+        binding?.root?.setOnClickListener {
+            binding?.editText?.clearFocus()
         }
-        binding?.display?.setOnClickListener {
-            clearKeyboard()
-        }
+        loadTracks()
+        binding?.searchBefore?.visibility = if (searchedAdapter.tracksSearched.isNotEmpty()) View.VISIBLE else View.GONE
         binding?.cross?.setOnClickListener {
             binding?.editText?.setText("")
-            if (tracks.isNotEmpty()) {
-                tracks.clear()
-                adapter.notifyDataSetChanged()
+            if (adapter.tracks.isNotEmpty()) {
+                setUpdatedTracks(emptyList())
             }
             binding?.searchError?.visibility = View.GONE
             binding?.buttonError?.visibility = View.GONE
-
-            clearKeyboard()
+            binding?.searchBefore?.visibility = if (searchedAdapter.tracksSearched.isNotEmpty()) View.VISIBLE else View.GONE
         }
-
         binding?.editText?.doOnTextChanged { s, _, _, _ ->
             binding?.cross?.visibility = clearCrossVisibility(s)
         }
-
         binding?.trackList?.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding?.trackList?.adapter = adapter
-        adapter.tracks = tracks
+        binding?.tracksSearched?.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding?.tracksSearched?.adapter = searchedAdapter
         binding?.editText?.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 getTracks()
@@ -84,6 +90,31 @@ class SearchActivity : AppCompatActivity() {
         binding?.buttonError?.setOnClickListener {
             getTracks()
         }
+        binding?.editText?.setOnFocusChangeListener{ _, hasFocus ->
+            binding?.searchBefore?.visibility = if (searchedAdapter.tracksSearched.isNotEmpty() && hasFocus && binding?.editText?.text?.isEmpty() == true) View.VISIBLE else View.GONE
+        }
+        binding?.editText?.doOnTextChanged { s, _, _, _ ->
+            if(searchedAdapter.tracksSearched.isNotEmpty() && binding?.editText?.hasFocus() == true && s?.isEmpty() == true){
+                binding?.searchBefore?.visibility = View.VISIBLE
+                binding?.trackList?.visibility = View.GONE
+            }else{
+                binding?.searchBefore?.visibility = View.GONE
+            }
+        }
+        binding?.clearHistory?.setOnClickListener{
+            App.sharedPrefs
+                ?.edit()
+                ?.remove(App.SEARCHED_TRACKS_KEY)
+                ?.apply()
+            binding?.searchBefore?.visibility = View.GONE
+        }
+        listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == App.SEARCHED_TRACKS_KEY) {
+                loadTracks()
+            }
+        }
+
+        App.sharedPrefs?.registerOnSharedPreferenceChangeListener(listener)
     }
 
     private fun clearCrossVisibility(s: CharSequence?): Int {
@@ -113,12 +144,10 @@ class SearchActivity : AppCompatActivity() {
                         if (response.code() == 200) {
                             if (response.body()?.results?.isNotEmpty() == true) {
                                 setUpdatedTracks(response.body()?.results!!)
-                            }
-                            if (tracks.isEmpty()) {
-                                showMessage(getString(R.string.nothing_found), "", MessageType.NF)
-                            }else{
                                 binding?.searchError?.visibility = View.GONE
                                 binding?.buttonError?.visibility = View.GONE
+                            }else{
+                                showMessage(getString(R.string.nothing_found), "", MessageType.NF)
                             }
                         } else {
                             showMessage(
@@ -168,5 +197,15 @@ class SearchActivity : AppCompatActivity() {
         adapter.tracks.clear()
         adapter.tracks.addAll(updatedTracks)
         diffResult.dispatchUpdatesTo(adapter)
+    }
+
+    private fun addTrackToMemory(track: Track){
+        searchHistory.saveSearchedTrack(track)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun loadTracks() {
+        searchedAdapter.tracksSearched = searchHistory.getHistory()
+        searchedAdapter.notifyDataSetChanged()
     }
 }
