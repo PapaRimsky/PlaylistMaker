@@ -12,8 +12,8 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_gravity="center"
-        android:scaleType="centerCrop"
-        android:contentDescription="@string/description_track_image"/>
+        android:contentDescription="@string/description_track_image"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -31,7 +31,7 @@
             android:fontFamily="@font/ys_display_regular"
             android:textColor="?attr/colorOnSecondary"
             android:textSize="@dimen/common_text_size"
-            tools:text ="Track Name"/>
+            tools:text="Track Name" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
                 android:fontFamily="@font/ys_display_regular"
                 android:textColor="?attr/colorSecondaryVariant"
                 android:textSize="@dimen/mini_text_size"
-                tools:text ="Author Name"/>
+                tools:text="Author Name" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -63,7 +63,7 @@
                 android:fontFamily="@font/ys_display_regular"
                 android:textColor="?attr/colorSecondaryVariant"
                 android:textSize="@dimen/mini_text_size"
-                tools:text ="Track Time"/>
+                tools:text="Track Time" />
         </LinearLayout>
     </LinearLayout>
 

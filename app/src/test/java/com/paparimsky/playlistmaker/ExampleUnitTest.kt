@@ -1,4 +1,4 @@
-package com.paparimsky.playlistmaker2
+package com.paparimsky.playlistmaker
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
