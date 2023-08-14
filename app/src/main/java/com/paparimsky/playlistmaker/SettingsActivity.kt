@@ -15,6 +15,8 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+        binding?.switchTheme?.isChecked = App.darkTheme
+
         binding?.switchTheme?.isChecked = this.resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         binding?.backToMainFromSettings?.setOnClickListener {
@@ -42,17 +44,9 @@ class SettingsActivity : AppCompatActivity() {
                 startActivity(this)
             }
         }
-        binding?.changeTheme?.setOnClickListener {
-            switchTheme()
-        }
-    }
-
-    private fun switchTheme() {
-        binding?.switchTheme?.isChecked = !binding?.switchTheme?.isChecked!!
-        if (binding?.switchTheme?.isChecked == true) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        binding?.switchTheme?.setOnClickListener{}
+        binding?.switchTheme?.setOnCheckedChangeListener  { _, checked  ->
+            (applicationContext as App).switchTheme(checked)
         }
     }
 }
