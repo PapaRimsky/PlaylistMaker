@@ -168,6 +168,5 @@ class SearchActivity : AppCompatActivity() {
         adapter.tracks.clear()
         adapter.tracks.addAll(updatedTracks)
         diffResult.dispatchUpdatesTo(adapter)
-
     }
 }
