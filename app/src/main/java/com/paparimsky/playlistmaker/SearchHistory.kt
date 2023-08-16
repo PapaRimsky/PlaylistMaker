@@ -10,7 +10,7 @@ class SearchHistory(private val sharedPrefs: SharedPreferences?) {
 
     fun getHistory(): ArrayList<Track> {
         val type = object : TypeToken<ArrayList<Track>>() {}.type
-        val jsonString = sharedPrefs?.getString(App.SEARCHED_TRACKS_KEY, null)
+        val jsonString = sharedPrefs?.getString(App.SEARCHED_TRACKS_KEY, null) ?: return ArrayList()
         return Gson().fromJson(jsonString, type)
     }
     fun saveSearchedTrack(track: Track) {

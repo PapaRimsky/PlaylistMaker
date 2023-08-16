@@ -63,7 +63,9 @@ class SearchActivity : AppCompatActivity() {
             clearKeyboard()
         }
         loadTracks()
-        binding?.searchBefore?.visibility = if (searchedAdapter.tracksSearched.isNotEmpty()) View.VISIBLE else View.GONE
+        if (searchedAdapter.tracksSearched.isNotEmpty()){
+            displayStatus(binding?.searchBefore!!, DisplayStatus.VISIBLE)
+        } else displayStatus(binding?.searchBefore!!, DisplayStatus.GONE)
         binding?.cross?.setOnClickListener {
             binding?.editText?.setText("")
             if (adapter.tracks.isNotEmpty()) {
@@ -71,7 +73,9 @@ class SearchActivity : AppCompatActivity() {
             }
             binding?.searchError?.visibility = View.GONE
             binding?.buttonError?.visibility = View.GONE
-            binding?.searchBefore?.visibility = if (searchedAdapter.tracksSearched.isNotEmpty()) View.VISIBLE else View.GONE
+            if (searchedAdapter.tracksSearched.isNotEmpty()){
+                displayStatus(binding?.searchBefore!!, DisplayStatus.VISIBLE)
+            } else displayStatus(binding?.searchBefore!!, DisplayStatus.GONE)
             clearKeyboard()
         }
         binding?.editText?.doOnTextChanged { s, _, _, _ ->
@@ -93,14 +97,16 @@ class SearchActivity : AppCompatActivity() {
             getTracks()
         }
         binding?.editText?.setOnFocusChangeListener{ _, hasFocus ->
-            binding?.searchBefore?.visibility = if (searchedAdapter.tracksSearched.isNotEmpty() && hasFocus && binding?.editText?.text?.isEmpty() == true) View.VISIBLE else View.GONE
+            if (searchedAdapter.tracksSearched.isNotEmpty() && hasFocus && binding?.editText?.text?.isEmpty() == true){
+                displayStatus(binding?.searchBefore!!, DisplayStatus.VISIBLE)
+            } else displayStatus(binding?.searchBefore!!, DisplayStatus.GONE)
         }
         binding?.editText?.doOnTextChanged { s, _, _, _ ->
             if(searchedAdapter.tracksSearched.isNotEmpty() && binding?.editText?.hasFocus() == true && s?.isEmpty() == true){
-                binding?.searchBefore?.visibility = View.VISIBLE
-                binding?.trackList?.visibility = View.GONE
+                displayStatus(binding?.searchBefore!!, DisplayStatus.VISIBLE)
+                displayStatus(binding?.trackList!!, DisplayStatus.GONE)
             }else{
-                binding?.searchBefore?.visibility = View.GONE
+                displayStatus(binding?.searchBefore!!, DisplayStatus.GONE)
             }
         }
         binding?.clearHistory?.setOnClickListener{
@@ -108,7 +114,7 @@ class SearchActivity : AppCompatActivity() {
                 ?.edit()
                 ?.remove(App.SEARCHED_TRACKS_KEY)
                 ?.apply()
-            binding?.searchBefore?.visibility = View.GONE
+            displayStatus(binding?.searchBefore!!, DisplayStatus.GONE)
         }
         listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == App.SEARCHED_TRACKS_KEY) {
@@ -117,6 +123,11 @@ class SearchActivity : AppCompatActivity() {
         }
 
         App.sharedPrefs?.registerOnSharedPreferenceChangeListener(listener)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        App.sharedPrefs?.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
     private fun clearCrossVisibility(s: CharSequence?): Int {
@@ -146,8 +157,8 @@ class SearchActivity : AppCompatActivity() {
                         if (response.code() == 200) {
                             if (response.body()?.results?.isNotEmpty() == true) {
                                 setUpdatedTracks(response.body()?.results!!)
-                                binding?.searchError?.visibility = View.GONE
-                                binding?.buttonError?.visibility = View.GONE
+                                displayStatus(binding?.searchError!!, DisplayStatus.GONE)
+                                displayStatus(binding?.buttonError!!, DisplayStatus.GONE)
                             }else{
                                 showMessage(getString(R.string.nothing_found), "", MessageType.NF)
                             }
@@ -173,14 +184,14 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showMessage(text: String, additionalMessage: String, typeMessage: MessageType) {
         if (text.isNotEmpty()) {
-            binding?.searchError?.visibility = View.VISIBLE
+            displayStatus(binding?.searchError!!, DisplayStatus.VISIBLE)
             setUpdatedTracks(emptyList())
             binding?.textError?.text = text
             when (typeMessage) {
                 MessageType.NF -> binding?.imageError?.setImageResource(R.drawable.error_nothing_found)
                 MessageType.E -> {
                     binding?.imageError?.setImageResource(R.drawable.error)
-                    binding?.buttonError?.visibility = View.VISIBLE
+                    displayStatus(binding?.buttonError!!, DisplayStatus.VISIBLE)
                 }
             }
             if (additionalMessage.isNotEmpty()) {
@@ -188,8 +199,8 @@ class SearchActivity : AppCompatActivity() {
                     .show()
             }
         } else {
-            binding?.searchError?.visibility = View.GONE
-            binding?.buttonError?.visibility = View.GONE
+            displayStatus(binding?.searchError!!, DisplayStatus.GONE)
+            displayStatus(binding?.buttonError!!, DisplayStatus.GONE)
         }
     }
 
@@ -208,5 +219,9 @@ class SearchActivity : AppCompatActivity() {
     private fun loadTracks() {
         searchedAdapter.tracksSearched = searchHistory.getHistory()
         searchedAdapter.notifyDataSetChanged()
+    }
+
+    private fun displayStatus(view: View, status: DisplayStatus) {
+        if (status == DisplayStatus.GONE) view.visibility = View.GONE else view.visibility = View.VISIBLE
     }
 }
