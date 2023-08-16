@@ -223,5 +223,6 @@ class SearchActivity : AppCompatActivity() {
 
     private fun displayStatus(view: View, status: DisplayStatus) {
         if (status == DisplayStatus.GONE) view.visibility = View.GONE else view.visibility = View.VISIBLE
+
     }
 }
