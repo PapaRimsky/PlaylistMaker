@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/colorSecondary"
     android:orientation="vertical"
     tools:ignore="RtlSymmetry">
@@ -34,23 +35,25 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/changeTheme"
-        style="@style/SettingsLinesStyle">
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:background="?android:attr/selectableItemBackground">
 
-        <TextView
-            style="@style/SettingsTextStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/dark_theme" />
-
-        <Switch
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchTheme"
-            style="@style/SettingsDrawableStyle"
-            android:clickable="false"
-            android:thumb="@drawable/thumb_selector"
-            android:track="@drawable/track_selector"
-            tools:ignore="UseSwitchCompatOrMaterialXml,TouchTargetSizeCheck" />
+            style="@style/SettingsTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:paddingStart="16dp"
+            android:paddingEnd="12dp"
+            android:text="@string/dark_theme"
+            android:thumb="@drawable/thumb"
+            android:track="@drawable/track"
+            app:thumbTint="@color/thumb_selector"
+            app:trackTint="@color/track_selector"
+            app:useMaterialThemeColors="false" />
+
     </LinearLayout>
 
     <LinearLayout
