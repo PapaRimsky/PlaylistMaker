@@ -22,7 +22,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(model: Track) {
         if (model.artworkUrl100.isNotEmpty()) {
-            trackImage.loadImageGlide(model.artworkUrl100, LAYOUT_RADIUS)
+            trackImage.loadImageGlide(model.artworkUrl100, LAYOUT_RADIUS, R.drawable.note)
         } else {
             trackImage.setImageResource(R.drawable.note)
         }
@@ -36,10 +36,11 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 fun ImageView.loadImageGlide(
     link: String,
     layout_radius: Float? = null,
+    image: Int
 ) {
     Glide.with(context)
         .load(link)
-        .placeholder(R.drawable.note)
+        .placeholder(image)
         .centerCrop()
         .transform(
             RoundedCorners(
