@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
+import com.paparimsky.playlistmaker.ImageViewExtensions.loadImageGlide
 import com.paparimsky.playlistmaker.databinding.ActivityAudioPlayerBinding
 import java.text.SimpleDateFormat
 import java.util.*

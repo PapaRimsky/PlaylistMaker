@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.paparimsky.playlistmaker.ImageViewExtensions.loadImageGlide
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,26 +32,4 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         trackTime.text =
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis)
     }
-}
-
-fun ImageView.loadImageGlide(
-    link: String,
-    layout_radius: Float? = null,
-    image: Int
-) {
-    Glide.with(context)
-        .load(link)
-        .placeholder(image)
-        .centerCrop()
-        .transform(
-            RoundedCorners(
-                TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    layout_radius ?: 0f,
-                    context.resources.displayMetrics
-                ).toInt()
-            )
-        )
-        .into(this)
-
 }
