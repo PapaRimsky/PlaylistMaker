@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class SearchedTrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
+class SearchedTrackAdapter(private val clickListener: TrackClickListener) : RecyclerView.Adapter<TrackViewHolder>() {
 
     var tracksSearched = ArrayList<Track>()
 
@@ -15,8 +15,13 @@ class SearchedTrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(tracksSearched[position])
+        holder.itemView.setOnClickListener { clickListener.onTrackClick(tracksSearched[position]) }
     }
 
     override fun getItemCount() = tracksSearched.size
+
+    fun interface TrackClickListener {
+        fun onTrackClick(track: Track)
+    }
 
 }

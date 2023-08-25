@@ -19,6 +19,12 @@
     <string name="reload" translatable="false">Обновить</string>
     <string name="search_before" translatable="false">Вы искали</string>
     <string name="clear_history" translatable="false">Очистить историю</string>
+    <string name="time">Длительность</string>
+    <string name="album">Альбом</string>
+    <string name="year">Год</string>
+    <string name="genre">Жанр</string>
+    <string name="country">Страна</string>
+    <string name="zero">0:00</string>
     <!-- descriptions-->
     <string name="description_BackToMain" translatable="false">BackToMain</string>
     <string name="description_ToShare" translatable="false">ToShare</string>
@@ -30,4 +36,7 @@
     <string name="description_dote" translatable="false">Dote</string>
     <string name="description_track_image" translatable="false">TrackImage</string>
     <string name="description_search_message" translatable="false">Message</string>
+    <string name="description_add_to_playlist" translatable="false">Добавить в плейлист</string>
+    <string name="description_play" translatable="false">Играть</string>
+    <string name="description_add_to_favourites" translatable="false">Добавить в избранное</string>
 </resources>

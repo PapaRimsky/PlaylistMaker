@@ -2,6 +2,7 @@ package com.paparimsky.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.paparimsky.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -37,12 +39,14 @@ class SearchActivity : AppCompatActivity() {
     private val iTunesService = retrofit.create(ITunesAPI::class.java)
 
     private val adapter = TrackAdapter{
-        addTrackToMemory(it)
+        addTrackToMemoryAndGoToPlayer(it)
     }
 
     private val searchHistory = SearchHistory(App.sharedPrefs)
 
-    private val searchedAdapter = SearchedTrackAdapter()
+    private val searchedAdapter = SearchedTrackAdapter{
+        addTrackToMemoryAndGoToPlayer(it)
+    }
 
     private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
@@ -212,8 +216,11 @@ class SearchActivity : AppCompatActivity() {
         diffResult.dispatchUpdatesTo(adapter)
     }
 
-    private fun addTrackToMemory(track: Track){
+    private fun addTrackToMemoryAndGoToPlayer(track: Track){
         searchHistory.saveSearchedTrack(track)
+        val intent = Intent(this, AudioPlayerActivity::class.java)
+        intent.putExtra("track", Gson().toJson(track))
+        startActivity(intent)
     }
 
     @SuppressLint("NotifyDataSetChanged")

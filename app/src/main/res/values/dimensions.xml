@@ -6,4 +6,5 @@
     <dimen name="common_text_size">16sp</dimen>
     <dimen name="mini_text_size">11sp</dimen>
     <dimen name="sp19">19sp</dimen>
+    <dimen name="sp13">13sp</dimen>
 </resources>

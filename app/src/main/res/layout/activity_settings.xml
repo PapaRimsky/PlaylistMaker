@@ -18,6 +18,7 @@
         <ImageButton
             android:id="@+id/backToMainFromSettings"
             style="@style/ArrowBackImageButtonStyle"
+            android:src="@drawable/arrow_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
