@@ -43,8 +43,8 @@ class SettingsActivity : AppCompatActivity() {
                 startActivity(this)
             }
         }
-        binding.switchTheme.setOnClickListener{}
-        binding.switchTheme.setOnCheckedChangeListener  { _, checked  ->
+        binding.switchTheme.setOnClickListener {}
+        binding.switchTheme.setOnCheckedChangeListener { _, checked ->
             (applicationContext as App).switchTheme(checked)
         }
     }

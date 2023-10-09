@@ -9,10 +9,11 @@ data class Track(
     val releaseDate: String,
     val primaryGenreName: String,
     val country: String,
-    val artworkUrl100: String
-){
-    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
+    val artworkUrl100: String,
+    val previewUrl: String
+) {
+    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 
-    fun getYear() = releaseDate.substring(0,4)
+    fun getYear() = releaseDate.substring(0, 4)
 
 }

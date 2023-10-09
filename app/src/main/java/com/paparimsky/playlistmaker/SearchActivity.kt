@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
@@ -29,6 +31,8 @@ class SearchActivity : AppCompatActivity() {
     private companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
         const val ITUNES_API_LINK = "https://itunes.apple.com"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
     private val retrofit = Retrofit.Builder()
@@ -38,17 +42,22 @@ class SearchActivity : AppCompatActivity() {
 
     private val iTunesService = retrofit.create(ITunesAPI::class.java)
 
-    private val adapter = TrackAdapter{
+    private val adapter = TrackAdapter {
         addTrackToMemoryAndGoToPlayer(it)
     }
-
     private val searchHistory = SearchHistory(App.sharedPrefs)
 
-    private val searchedAdapter = SearchedTrackAdapter{
+    private val searchedAdapter = SearchedTrackAdapter {
         addTrackToMemoryAndGoToPlayer(it)
     }
 
     private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
+
+    private var isClickAllowed = true
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val searchRunnable = Runnable { getTracks() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +76,7 @@ class SearchActivity : AppCompatActivity() {
             clearKeyboard()
         }
         loadTracks()
-        if (searchedAdapter.tracksSearched.isNotEmpty()){
+        if (searchedAdapter.tracksSearched.isNotEmpty()) {
             displayStatus(binding.searchBefore, DisplayStatus.VISIBLE)
         } else displayStatus(binding.searchBefore, DisplayStatus.GONE)
         binding.cross.setOnClickListener {
@@ -77,13 +86,10 @@ class SearchActivity : AppCompatActivity() {
             }
             binding.searchError.visibility = View.GONE
             binding.buttonError.visibility = View.GONE
-            if (searchedAdapter.tracksSearched.isNotEmpty()){
+            if (searchedAdapter.tracksSearched.isNotEmpty()) {
                 displayStatus(binding.searchBefore, DisplayStatus.VISIBLE)
             } else displayStatus(binding.searchBefore, DisplayStatus.GONE)
             clearKeyboard()
-        }
-        binding.editText.doOnTextChanged { s, _, _, _ ->
-            binding.cross.visibility = clearCrossVisibility(s)
         }
         binding.trackList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -100,21 +106,23 @@ class SearchActivity : AppCompatActivity() {
         binding.buttonError.setOnClickListener {
             getTracks()
         }
-        binding.editText.setOnFocusChangeListener{ _, hasFocus ->
-            if (searchedAdapter.tracksSearched.isNotEmpty() && hasFocus && binding.editText.text.isEmpty()){
+        binding.editText.setOnFocusChangeListener { _, hasFocus ->
+            if (searchedAdapter.tracksSearched.isNotEmpty() && hasFocus && binding.editText.text.isEmpty()) {
                 displayStatus(binding.searchBefore, DisplayStatus.VISIBLE)
             } else displayStatus(binding.searchBefore, DisplayStatus.GONE)
         }
         binding.editText.doOnTextChanged { s, _, _, _ ->
-            if(searchedAdapter.tracksSearched.isNotEmpty() && binding.editText.hasFocus() && s?.isEmpty() == true){
+            searchDebounce()
+            binding.cross.visibility = clearCrossVisibility(s)
+            if (searchedAdapter.tracksSearched.isNotEmpty() && binding.editText.hasFocus() && s?.isEmpty() == true) {
                 displayStatus(binding.searchBefore, DisplayStatus.VISIBLE)
                 displayStatus(binding.trackList, DisplayStatus.GONE)
-            }else{
+            } else {
                 displayStatus(binding.searchBefore, DisplayStatus.GONE)
                 displayStatus(binding.trackList, DisplayStatus.VISIBLE)
             }
         }
-        binding.clearHistory.setOnClickListener{
+        binding.clearHistory.setOnClickListener {
             App.sharedPrefs
                 ?.edit()
                 ?.remove(App.SEARCHED_TRACKS_KEY)
@@ -153,18 +161,22 @@ class SearchActivity : AppCompatActivity() {
 
     private fun getTracks() {
         if (binding.editText.text.isNotEmpty()) {
+            displayStatus(binding.trackList, DisplayStatus.GONE)
+            displayStatus(binding.progressBar, DisplayStatus.VISIBLE)
             iTunesService.getTracks(binding.editText.text.toString())
                 .enqueue(object : Callback<TrackResponse> {
                     override fun onResponse(
                         call: Call<TrackResponse>,
                         response: Response<TrackResponse>
                     ) {
+                        displayStatus(binding.progressBar, DisplayStatus.GONE)
                         if (response.code() == 200) {
                             if (response.body()?.results?.isNotEmpty() == true) {
-                                setUpdatedTracks(response.body()?.results!!)
+                                displayStatus(binding.trackList, DisplayStatus.VISIBLE)
                                 displayStatus(binding.searchError, DisplayStatus.GONE)
                                 displayStatus(binding.buttonError, DisplayStatus.GONE)
-                            }else{
+                                setUpdatedTracks(response.body()?.results!!)
+                            } else {
                                 showMessage(getString(R.string.nothing_found), "", MessageType.NF)
                             }
                         } else {
@@ -177,6 +189,7 @@ class SearchActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                        displayStatus(binding.progressBar, DisplayStatus.GONE)
                         showMessage(
                             getString(R.string.errors_with_link),
                             t.message.toString(),
@@ -210,17 +223,20 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setUpdatedTracks(updatedTracks: List<Track>) {
-        val diffResult = DiffUtil.calculateDiff(TrackDiffUtilCallback(adapter.tracks, updatedTracks))
+        val diffResult =
+            DiffUtil.calculateDiff(TrackDiffUtilCallback(adapter.tracks, updatedTracks))
         adapter.tracks.clear()
         adapter.tracks.addAll(updatedTracks)
         diffResult.dispatchUpdatesTo(adapter)
     }
 
-    private fun addTrackToMemoryAndGoToPlayer(track: Track){
-        searchHistory.saveSearchedTrack(track)
-        val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra("track", Gson().toJson(track))
-        startActivity(intent)
+    private fun addTrackToMemoryAndGoToPlayer(track: Track) {
+        if (clickDebounce()) {
+            searchHistory.saveSearchedTrack(track)
+            val intent = Intent(this, AudioPlayerActivity::class.java)
+            intent.putExtra("track", Gson().toJson(track))
+            startActivity(intent)
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -230,6 +246,21 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun displayStatus(view: View, status: DisplayStatus) {
-        if (status == DisplayStatus.GONE) view.visibility = View.GONE else view.visibility = View.VISIBLE
+        if (status == DisplayStatus.GONE) view.visibility = View.GONE else view.visibility =
+            View.VISIBLE
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 }
