@@ -19,7 +19,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-        when(sharedPrefs?.getString(THEME_KEY, "")){
+        when (sharedPrefs?.getString(THEME_KEY, "")) {
             LIGHT_THEME -> darkTheme = false
             DARK_THEME -> darkTheme = true
         }
@@ -43,7 +43,7 @@ class App : Application() {
         )
     }
 
-    private fun saveTheme(theme: String){
+    private fun saveTheme(theme: String) {
         sharedPrefs?.edit()
             ?.putString(THEME_KEY, theme)
             ?.apply()

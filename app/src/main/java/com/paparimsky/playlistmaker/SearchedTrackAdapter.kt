@@ -4,7 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class SearchedTrackAdapter(private val clickListener: TrackClickListener) : RecyclerView.Adapter<TrackViewHolder>() {
+class SearchedTrackAdapter(private val clickListener: TrackClickListener) :
+    RecyclerView.Adapter<TrackViewHolder>() {
 
     var tracksSearched = ArrayList<Track>()
 

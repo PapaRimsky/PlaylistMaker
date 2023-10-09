@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/colorSecondary"
     android:orientation="vertical"
     tools:ignore="RtlSymmetry">
@@ -18,12 +18,12 @@
         <ImageButton
             android:id="@+id/backToMainFromSettings"
             style="@style/ArrowBackImageButtonStyle"
-            android:src="@drawable/arrow_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="@string/description_BackToMain"
             android:padding="16dp"
+            android:src="@drawable/arrow_back"
             tools:ignore="SpeakableTextPresentCheck" />
 
         <TextView

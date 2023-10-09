@@ -24,7 +24,7 @@
     <string name="year">Год</string>
     <string name="genre">Жанр</string>
     <string name="country">Страна</string>
-    <string name="zero">0:00</string>
+    <string name="zero">00:00</string>
     <!-- descriptions-->
     <string name="description_BackToMain" translatable="false">BackToMain</string>
     <string name="description_ToShare" translatable="false">ToShare</string>

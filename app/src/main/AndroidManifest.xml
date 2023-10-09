@@ -17,7 +17,7 @@
         <activity
             android:name=".AudioPlayerActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
