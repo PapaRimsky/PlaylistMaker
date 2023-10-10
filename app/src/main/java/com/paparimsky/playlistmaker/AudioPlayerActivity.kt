@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.google.gson.Gson
 import com.paparimsky.playlistmaker.ImageViewExtensions.loadImageGlide
 import com.paparimsky.playlistmaker.databinding.ActivityAudioPlayerBinding
@@ -15,15 +16,6 @@ import java.util.*
 class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAudioPlayerBinding
-
-    companion object {
-        const val LAYOUT_RADIUS = 8f
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val DELAY = 300L
-    }
 
     private var playerState = STATE_DEFAULT
 
@@ -60,10 +52,10 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding.timeParameter.text =
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
         if (track.collectionName.isNotEmpty()) {
-            binding.albumParameter.visibility = View.VISIBLE
+            binding.albumParameter.isVisible = true
             binding.albumParameter.text = track.collectionName
         } else {
-            binding.albumParameter.visibility = View.GONE
+            binding.albumParameter.isVisible = false
         }
         binding.yearParameter.text = track.getYear()
         binding.genreParameter.text = track.primaryGenreName
@@ -132,5 +124,13 @@ class AudioPlayerActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+    companion object {
+        const val LAYOUT_RADIUS = 8f
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val DELAY = 300L
     }
 }

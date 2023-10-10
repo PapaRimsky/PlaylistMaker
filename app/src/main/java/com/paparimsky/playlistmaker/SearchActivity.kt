@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,13 +28,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
-
-    private companion object {
-        const val SEARCH_TEXT = "SEARCH_TEXT"
-        const val ITUNES_API_LINK = "https://itunes.apple.com"
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-    }
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(ITUNES_API_LINK)
@@ -231,7 +225,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun addTrackToMemoryAndGoToPlayer(track: Track) {
-        if (clickDebounce()) {
+        if (clickOnTrackDebounce()) {
             searchHistory.saveSearchedTrack(track)
             val intent = Intent(this, AudioPlayerActivity::class.java)
             intent.putExtra("track", Gson().toJson(track))
@@ -246,11 +240,10 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun displayStatus(view: View, status: DisplayStatus) {
-        if (status == DisplayStatus.GONE) view.visibility = View.GONE else view.visibility =
-            View.VISIBLE
+        view.isVisible = status != DisplayStatus.GONE
     }
 
-    private fun clickDebounce(): Boolean {
+    private fun clickOnTrackDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
@@ -262,5 +255,11 @@ class SearchActivity : AppCompatActivity() {
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+    private companion object {
+        const val SEARCH_TEXT = "SEARCH_TEXT"
+        const val ITUNES_API_LINK = "https://itunes.apple.com"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }
