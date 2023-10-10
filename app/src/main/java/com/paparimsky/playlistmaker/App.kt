@@ -6,16 +6,6 @@ import androidx.appcompat.app.AppCompatDelegate
 
 class App : Application() {
 
-    companion object {
-        const val PREFERENCES = "preferences"
-        const val SEARCHED_TRACKS_KEY = "key_for_searched_tracks"
-        private const val THEME_KEY = "key_for_theme"
-        private const val LIGHT_THEME = "light"
-        private const val DARK_THEME = "dark"
-        var darkTheme = false
-        var sharedPrefs: SharedPreferences? = null
-    }
-
     override fun onCreate() {
         super.onCreate()
         sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
@@ -48,5 +38,13 @@ class App : Application() {
             ?.putString(THEME_KEY, theme)
             ?.apply()
     }
-
+    companion object {
+        const val PREFERENCES = "preferences"
+        const val SEARCHED_TRACKS_KEY = "key_for_searched_tracks"
+        private const val THEME_KEY = "key_for_theme"
+        private const val LIGHT_THEME = "light"
+        private const val DARK_THEME = "dark"
+        var darkTheme = false
+        var sharedPrefs: SharedPreferences? = null
+    }
 }

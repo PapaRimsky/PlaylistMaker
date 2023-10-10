@@ -14,10 +14,6 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val artistName: TextView = itemView.findViewById(R.id.artist_name)
     private val trackTime: TextView = itemView.findViewById(R.id.track_time)
 
-    companion object {
-        const val LAYOUT_RADIUS = 2f
-    }
-
     fun bind(model: Track) {
         if (model.artworkUrl100.isNotEmpty()) {
             trackImage.loadImageGlide(model.artworkUrl100, LAYOUT_RADIUS, R.drawable.note)
@@ -28,5 +24,8 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         artistName.text = model.artistName
         trackTime.text =
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis)
+    }
+    companion object {
+        const val LAYOUT_RADIUS = 2f
     }
 }
